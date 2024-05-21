@@ -21,7 +21,7 @@ export function DocumentTile({ document }: DocumentTileProps) {
           {document.name}.{document.type}
         </Text>
         <Text className="text-xs text-zinc-500">
-          {format(document.createdAt!, 'dd/MM/yyyy - hh:mm')}
+          {format(new Date(document.createdAt!), 'dd/MM/yyyy')}
         </Text>
       </View>
       <View className="">

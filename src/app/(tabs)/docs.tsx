@@ -5,8 +5,9 @@ import { Input } from '@/components/input'
 import { Document } from '@/contexts/document-context'
 import { useAuth } from '@/hooks/useAuth'
 import { useDocument } from '@/hooks/useDocument'
+import { useFocusEffect } from 'expo-router'
 import { Scroll, Search } from 'lucide-react-native'
-import { useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { FlatList, ScrollView, Text, View } from 'react-native'
 
 export default function Docs() {
@@ -15,18 +16,20 @@ export default function Docs() {
   const [documentsToFilter, setDocumentsToFilter] = useState<Document[]>([])
   const { documents, findDocumentByUserId, totalDocuments } = useDocument()
 
-  useEffect(() => {
-    findDocumentByUserId(user?.id!)
+  useFocusEffect(
+    useCallback(() => {
+      findDocumentByUserId(user?.id!)
 
-    if (filter !== '') {
-      const documentsFiltered = documents.filter(document =>
-        document.name.toLowerCase().includes(filter.toLowerCase()),
-      )
-      setDocumentsToFilter(documentsFiltered)
-    } else {
-      setDocumentsToFilter(documents)
-    }
-  }, [filter, totalDocuments])
+      if (filter !== '') {
+        const documentsFiltered = documents.filter(document =>
+          document.name.toLowerCase().includes(filter.toLowerCase()),
+        )
+        setDocumentsToFilter(documentsFiltered)
+      } else {
+        setDocumentsToFilter(documents)
+      }
+    }, [filter, totalDocuments]),
+  )
 
   return (
     <View className="flex-1 min-h-screen p-6 bg-white pt-14">

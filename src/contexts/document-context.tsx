@@ -1,6 +1,7 @@
 import 'react-native-get-random-values'
 
 import { api } from '@/lib/axios'
+import { format } from 'date-fns'
 import { createContext, ReactNode, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { z } from 'zod'
@@ -17,7 +18,7 @@ const documentSchema = z.object({
   userId: z.string().uuid(),
   type: z.string().optional(),
   createdAt: z.string().optional(),
-  updatedAt: z.string().optional(),
+  updatedAt: z.string().nullable().optional(),
 })
 
 export type Document = z.infer<typeof documentSchema>
@@ -49,7 +50,7 @@ export function DocumentProvider({ children }: DocumentProviderProps) {
 
   async function findDocumentByUserId(userId: string) {
     const response = await api.get<Document[]>(
-      `/documents?userId=${userId}&_sort=createdAt`,
+      `/documents?userId=${userId}&_sort=-createdAt,createdAt`,
     )
 
     setDocuments(response.data)
@@ -57,7 +58,7 @@ export function DocumentProvider({ children }: DocumentProviderProps) {
 
   async function findDocumentLastFiveByUserId(userId: string) {
     const response = await api.get<Document[]>(
-      `/documents?userId=${userId}&_limit=5&_sort=createdAt`,
+      `/documents?userId=${userId}&_limit=5&_sort=-createdAt,createdAt`,
     )
 
     return response.data
@@ -95,7 +96,8 @@ export function DocumentProvider({ children }: DocumentProviderProps) {
       pages: document.pages,
       size: document.size,
       userId: document.userId,
-      createdAt: Date(),
+      createdAt: format(Date(), 'yyyy-MM-dd'),
+      updatedAt: null,
       type: 'pdf',
     }
 

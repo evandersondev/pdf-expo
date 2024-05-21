@@ -5,7 +5,7 @@
 </h1>
 <br>
 <br>
-  <div style="display: flex; algin-items: center; justify-content:center; width: 100%;margin-bottom:12px;">
+  <div style="display: flex; margin:auto; algin-items: center; justify-content:center; width: 100%;margin-bottom:12px;">
     <img src="./src/assets/images/views.png" alt="YOUR_PROJECT_NAME" width="60%">
   </div>
 

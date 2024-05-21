@@ -55,19 +55,15 @@ export default function Document() {
       return
     }
 
-    if (Number(pages) < 1 || Number(size) < 1) {
-      Alert.alert(
-        'Erro!',
-        'Os campos de página e tamanha(MB) não podem ser menor que 1.',
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              setLoading(false)
-            },
+    if (Number(pages) < 1) {
+      Alert.alert('Erro!', 'O documento não conter apenas 1 página.', [
+        {
+          text: 'OK',
+          onPress: () => {
+            setLoading(false)
           },
-        ],
-      )
+        },
+      ])
       return
     }
 
@@ -95,6 +91,9 @@ export default function Document() {
         Alert.alert('Erro!', error.message, [
           {
             text: 'OK',
+            onPress: () => {
+              setLoading(false)
+            },
           },
         ])
       }
@@ -146,7 +145,7 @@ export default function Document() {
         size: Number(size),
         pages: Number(pages),
         createdAt: document?.createdAt!,
-        updatedAt: Date(),
+        updatedAt: format(Date(), 'yyyy-MM-dd'),
         type: document?.type!,
       })
 
@@ -176,6 +175,10 @@ export default function Document() {
   useEffect(() => {
     loadDocument()
   }, [])
+
+  useEffect(() => {
+    setSize(String(Number(pages) * 2))
+  }, [pages])
 
   async function loadDocument() {
     if (id != 'null') {
@@ -248,15 +251,14 @@ export default function Document() {
             </Input.Root>
           </View>
 
-          {document !== undefined && document?.updatedAt !== null && (
+          {document !== undefined && document?.createdAt !== null && (
             <View className="w-full gap-1.5">
-              <Text className="font-semibold">Atualizado em</Text>
+              <Text className="font-semibold">Criado em</Text>
               <View className="opacity-50">
                 <Input.Root>
                   <Icon icon={Calendar} />
                   <Input.Field
-                    value={format(document?.updatedAt!, 'dd/MM/yyyy - hh:mm')}
-                    placeholder="Autor"
+                    value={format(new Date(document?.createdAt!), 'dd/MM/yyyy')}
                     readOnly
                   />
                 </Input.Root>
@@ -267,6 +269,7 @@ export default function Document() {
           <View className="flex-row flex-1 gap-6">
             <View className="flex-1 gap-1.5">
               <Text className="font-semibold">Total de páginas</Text>
+
               <Input.Root>
                 <Icon icon={BookOpen} />
                 <Input.Field
@@ -279,16 +282,18 @@ export default function Document() {
             </View>
 
             <View className="flex-1 gap-1.5">
-              <Text className="font-semibold">Tamanho (MB)</Text>
-              <Input.Root>
-                <Icon icon={Calculator} />
-                <Input.Field
-                  value={size}
-                  onChangeText={setSize}
-                  placeholder="0 (MB)"
-                  keyboardType="numeric"
-                />
-              </Input.Root>
+              <Text className="font-semibold">Tamanho (2 x páginas)</Text>
+              <View className="opacity-50">
+                <Input.Root>
+                  <Icon icon={Calculator} />
+                  <Input.Field
+                    value={`${size}MB`}
+                    placeholder="0 (MB)"
+                    keyboardType="numeric"
+                    readOnly
+                  />
+                </Input.Root>
+              </View>
             </View>
           </View>
 
